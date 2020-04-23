@@ -1,26 +1,49 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import { makeStyles } from '@material-ui/core/styles';
+import Button from '@material-ui/core/Button';
+import Modal from './modalRoot';
+import {connect} from 'react-redux'
+import { showModal, hideModal} from './actions'
+const MESSAGE = "A redux modal component."
+const mapDispatchToProps = dispatch => ({
+    hideModal: () => dispatch(hideModal()),
+    showModal: (modalProps, modalType) => {
+      dispatch(showModal({ modalProps, modalType }))
+    }
+  })
+class App extends React.Component{
+    constructor(props){
+        super(props)
+        this.closeModal = this.closeModal.bind(this);
+        this.openConfirmModal = this.openConfirmModal.bind(this);
+    }
+    
+  openConfirmModal() {
+    
+    this.props.showModal({
+      open:true,
+      title: 'Confirm Modal',
+      message: MESSAGE,
+      confirmAction: this.closeModal,
+      closeModal: this.closeModal
+    }, 'confirm')
+  }
+  closeModal() {
+    this.props.hideModal()
+  }
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    render(){
+        return(
+            <div >
+           
+            <Button variant="contained" color="primary"  onClick={this.openConfirmModal}>
+              Confirm
+            </Button>
+            <Modal hideModal={this.props.hideModal} />
+          </div>
+        )
+    }
 }
 
-export default App;
+  
+export default connect(null, mapDispatchToProps)(App)
